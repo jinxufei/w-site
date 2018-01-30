@@ -1,0 +1,9 @@
+com\urwoo\manager\controller\UserController.class
+com\urwoo\manager\controller\ArticleController.class
+com\urwoo\manager\responses\WResponses.class
+com\urwoo\manager\controller\filters\CorsFilter.class
+com\urwoo\manager\adapter\ParamAdapter.class
+com\urwoo\manager\WSiteManagerApp.class
+com\urwoo\manager\controller\BaseController.class
+com\urwoo\manager\controller\ArticleCategoryController.class
+com\urwoo\manager\responses\Message.class

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: w-site-web
+
+server:
+  port: ${service.server.port:8888}
+  undertow:
+       worker-threads: 20
+       buffer-size: 512
+       io-threads: 6
+
+eureka:
+  client:
+    serviceUrl:
+      #defaultZone: ${eureka.serviceUrl:http://127.0.0.1:8761/eureka/}
+      defaultZone: ${eureka.serviceUrl:http://10.79.96.52:8763/eureka}
+
+feign:
+   hystrix:
+      enabled: true
+
+# REDIS (RedisSingleProperties)
+redis:
+  cluster: false
+  single-host: 127.0.0.1
+  single-port: 6379
+  password:

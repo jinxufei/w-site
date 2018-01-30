@@ -1,0 +1,5 @@
+com\urwoo\user\service\UserServiceImpl.class
+com\urwoo\user\UserApplication.class
+com\urwoo\user\adapter\UserQueryParamAdapter.class
+com\urwoo\user\adapter\UserAdapter.class
+com\urwoo\user\config\DataSourcePrimaryConfig.class

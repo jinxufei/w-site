@@ -1,0 +1,8 @@
+com\urwoo\article\adapter\ArticleCategoryQueryParamAdapter.class
+com\urwoo\article\adapter\ArticleCategoryAdapter.class
+com\urwoo\article\config\DataSourcePrimaryConfig.class
+com\urwoo\article\adapter\ArticleQueryParamAdapter.class
+com\urwoo\article\adapter\ArticleAdapter.class
+com\urwoo\article\service\ArticleServiceImpl.class
+com\urwoo\article\ArticleApplication.class
+com\urwoo\article\service\ArticleCategoryServiceImpl.class

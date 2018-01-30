@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.urwoo.mapper.ArticleMapper">
+    <!-- result map settings -->
+    <resultMap id="BaseResultMap" type="com.urwoo.po.ArticlePo">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="types" property="types" jdbcType="SMALLINT"/>
+        <result column="check_status" property="checkStatus" jdbcType="SMALLINT"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+        <result column="article_cate_id" property="articleCateId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="ArticleInfoResult" type="com.urwoo.po.ArticleInfoPo" extends="BaseResultMap">
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="article_cate_name" property="articleCategoryName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table_name">w_article</sql>
+
+    <sql id="column_list">
+		id,
+		title,
+        content,
+        types,
+        check_status,
+        status,
+        create_time,
+        modify_time,
+        article_cate_id,
+        user_id
+	</sql>
+
+    <insert id="save" parameterType="com.urwoo.po.ArticlePo">
+        INSERT INTO
+        <include refid="table_name"/>
+        (title,
+        content,
+        types,
+        check_status,
+        status,
+        create_time,
+        modify_time,
+        article_cate_id)
+        VALUE
+        (#{title, jdbcType=VARCHAR},
+        #{content, jdbcType=VARCHAR},
+        #{types, jdbcType=SMALLINT},
+        #{checkStatus, jdbcType=SMALLINT},
+        #{status, jdbcType=SMALLINT},
+        now(), now(), #{articleCateId, jdbcType=VARCHAR})
+    </insert>
+
+    <update id="update" parameterType="com.urwoo.po.ArticlePo">
+        UPDATE
+        <include refid="table_name"/>
+        SET
+        title=#{title, jdbcType=VARCHAR},
+        content=#{content, jdbcType=VARCHAR}
+        <where>
+            <![CDATA[id=#{id, jdbcType=BIGINT}]]>
+        </where>
+    </update>
+
+    <!-- 批量更新审核状态 -->
+    <update id="batchUpdateCheckStatus">
+        UPDATE
+        <include refid="table_name"/>
+        SET `check_status`=#{checkStatus}
+        <where>
+            id
+            IN
+            <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <!-- 批量更新状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE
+        <include refid="table_name"/>
+        SET `status`=#{status}
+        <where>
+            id
+            IN
+            <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column_list"/>
+        FROM
+        <include refid="table_name"/>
+        <where>
+            id=#{id, jdbcType=BIGINT}
+        </where>
+    </select>
+
+    <select id="getInfo" resultMap="ArticleInfoResult">
+        SELECT
+        article.id,
+        article.title,
+        article.content,
+        article.types,
+        article.check_status,
+        article.`status`,
+        article.create_time,
+        article.modify_time,
+        article.article_cate_id,
+        article.user_id,
+        cate.`name` AS article_cate_name,
+        u.username AS username,
+        u.nickname AS nickname
+        FROM
+        w_article article
+        LEFT JOIN
+        w_article_category cate
+        ON
+        article.article_cate_id=cate.id
+        LEFT JOIN
+        w_user u
+        ON
+        u.id=article.user_id
+        WHERE
+        article.id=#{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="getByTitle" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column_list"/>
+        FROM
+        <include refid="table_name"/>
+        <where>
+            user_id=#{userId, jdbcType=BIGINT}
+            AND
+            title=#{title, jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <select id="query" resultMap="ArticleInfoResult">
+        SELECT
+        article.id,
+        article.title,
+        article.content,
+        article.types,
+        article.check_status,
+        article.`status`,
+        article.create_time,
+        article.modify_time,
+        article.article_cate_id,
+        article.user_id,
+        cate.`name` AS article_cate_name,
+        u.username AS username,
+        u.nickname AS nickname
+        FROM
+        w_article article
+        LEFT JOIN
+        w_article_category cate
+        ON
+        article.article_cate_id=cate.id
+        LEFT JOIN
+        w_user u
+        ON
+        u.id=article.user_id
+        <where>
+            <include refid="param_condition_sql"/>
+        </where>
+        ORDER BY
+        article.modify_time DESC
+        LIMIT #{start, jdbcType=BIGINT}, #{limit, jdbcType=INTEGER}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM
+        w_article article
+        LEFT JOIN
+        w_article_category cate
+        ON
+        article.article_cate_id=cate.id
+        LEFT JOIN
+        w_user u
+        ON
+        u.id=article.user_id
+        <where>
+            <include refid="param_condition_sql"/>
+        </where>
+    </select>
+
+    <sql id="param_condition_sql">
+        AND article.`status` <![CDATA[<>]]> 2
+        AND cate.`status` <![CDATA[<>]]> 2
+
+        <if test="param.title != null and param.title != ''">
+            AND article.`title` LIKE CONCAT("%", CONCAT(#{param.title, jdbcType=INTEGER},"%"))
+        </if>
+        <if test="param.status != null">
+            AND article.`status`=#{param.status, jdbcType=INTEGER}
+        </if>
+        <if test="param.startDate != null and param.startDate != '' and param.endDate != null and param.endDate != ''">
+            AND article.create_time BETWEEN CONCAT(#{param.startDate}, ' 00:00:00') AND CONCAT(#{param.endDate}, ' 23:59:59')
+        </if>
+        <if test="param.articleCateIds != null and param.articleCateIds.length > 0">
+            AND article.article_cate_id IN
+            <foreach collection="param.articleCateIds" index="index" item="articleCateId" open="(" close=")" separator=",">
+                #{articleCateId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+    </sql>
+</mapper>

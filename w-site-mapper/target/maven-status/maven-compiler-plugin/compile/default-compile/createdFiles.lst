@@ -1,0 +1,14 @@
+com\urwoo\mapper\ArticleCategoryMapper.class
+com\urwoo\request\ArticleQueryReq.class
+com\urwoo\mapper\ArticleCommentMapper.class
+com\urwoo\request\ArticleCommentQueryReq.class
+com\urwoo\request\UserQueryReq.class
+com\urwoo\mapper\ArticleMapper.class
+com\urwoo\po\ArticlePo.class
+com\urwoo\po\ArticleInfoPo.class
+com\urwoo\po\ArticleCommonPo.class
+com\urwoo\request\BaseQueryReq.class
+com\urwoo\mapper\UserMapper.class
+com\urwoo\po\ArticleCategoryPo.class
+com\urwoo\po\UserPo.class
+com\urwoo\request\ArticleCategoryQueryReq.class

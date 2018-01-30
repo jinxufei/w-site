@@ -1,0 +1,10 @@
+com\urwoo\article\vo\Article.class
+com\urwoo\article\hystrix\ArticleServiceHystrix.class
+com\urwoo\article\vo\query\ArticleCategoryQueryParam.class
+com\urwoo\article\codes\ArticleCategoryBizCode.class
+com\urwoo\article\vo\query\ArticleQueryParam.class
+com\urwoo\article\vo\ArticleCategory.class
+com\urwoo\article\hystrix\ArticleCategoryServiceHystrix.class
+com\urwoo\article\codes\ArticleBizCode.class
+com\urwoo\article\ArticleCategoryRemoteService.class
+com\urwoo\article\ArticleRemoteService.class

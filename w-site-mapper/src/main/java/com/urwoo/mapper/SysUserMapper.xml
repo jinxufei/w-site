@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.urwoo.mapper.SysUserMapper">
+    <!-- result map settings -->
+    <resultMap id="BaseResultMap" type="com.urwoo.po.SysUserPo">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="sso_id" property="ssoId" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="table_name">sys_user</sql>
+
+    <sql id="column_list">
+		id,
+        `name`,
+        username,
+        password,
+        sso_id,
+        status,
+        create_time,
+        modify_time
+	</sql>
+
+    <insert id="save" parameterType="com.urwoo.po.SysUserPo">
+        INSERT INTO
+        <include refid="table_name"/>
+        (`name`,
+        username,
+        password,
+        sso_id,
+        status,
+        create_time,
+        modify_time)
+        VALUE
+        (#{name, jdbcType=VARCHAR},
+        #{username, jdbcType=VARCHAR},
+        #{password, jdbcType=VARCHAR},
+        #{ssoId, jdbcType=VARCHAR},
+        #{status, jdbcType=SMALLINT},
+        now(), now())
+    </insert>
+
+    <update id="update" parameterType="com.urwoo.po.SysUserPo">
+        UPDATE
+        <include refid="table_name"/>
+        SET
+        `name`=#{name, jdbcType=VARCHAR},
+        password=#{password, jdbcType=VARCHAR}
+        <where>
+            <![CDATA[id=#{id, jdbcType=BIGINT}]]>
+        </where>
+    </update>
+
+    <!-- 批量更新状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE
+        <include refid="table_name"/>
+        SET `status`=#{status}
+        <where>
+            id
+            IN
+            <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column_list"/>
+        FROM
+        <include refid="table_name"/>
+        <where>
+            id=#{id, jdbcType=BIGINT}
+        </where>
+    </select>
+
+    <select id="getByUsername" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column_list"/>
+        FROM
+        <include refid="table_name"/>
+        <where>
+            username=#{username, jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <select id="listByStatus" resultMap="BaseResultMap">
+        SELECT <include refid="column_list"/>
+        FROM
+        <include refid="table_name"/>
+        <where>
+            `status` = #{status, jdbcType=INTEGER}
+        </where>
+        ORDER BY
+        `sort` ASC
+    </select>
+
+    <select id="query" resultMap="BaseResultMap">
+        SELECT
+        <include refid="column_list"/>
+        FROM
+        <include refid="table_name"/>
+        <where>
+            <include refid="param_condition_sql"/>
+        </where>
+        ORDER BY
+        modify_time DESC
+        LIMIT #{start, jdbcType=BIGINT}, #{limit, jdbcType=INTEGER}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM
+        <include refid="table_name"/>
+        <where>
+            <include refid="param_condition_sql"/>
+        </where>
+    </select>
+
+    <sql id="param_condition_sql">
+        AND `status` <![CDATA[<>]]> 2
+        <if test="param.status != null">
+            AND `status`=#{param.status, jdbcType=INTEGER}
+        </if>
+        <if test="param.names != null and param.names.length > 0">
+            AND
+            <foreach collection="param.names" index="index" item="name" open="(" close=")" separator="or">
+                `name` LIKE CONCAT('%',CONCAT(#{name, jdbcType=VARCHAR},'%'))
+            </foreach>
+        </if>
+        <if test="param.startDate != null and param.startDate != '' and param.endDate != null and param.endDate != ''">
+            AND create_time BETWEEN CONCAT(#{param.startDate}, ' 00:00:00') AND CONCAT(#{param.endDate}, ' 23:59:59')
+        </if>
+    </sql>
+</mapper>

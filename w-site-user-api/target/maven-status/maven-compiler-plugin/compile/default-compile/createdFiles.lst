@@ -1,0 +1,5 @@
+com\urwoo\user\hystrix\UserServiceHystrix.class
+com\urwoo\user\vo\query\UserQueryParam.class
+com\urwoo\user\UserRemoteService.class
+com\urwoo\user\vo\User.class
+com\urwoo\user\codes\UserBizCode.class

@@ -1,0 +1,10 @@
+# Redis
+redisKey:
+  # 缓存时间
+  expire_time: 120
+  prefix:
+    # 验证码Redis前缀
+    verifycode: 'VERIFYCODE:'
+    # 登录成功用户前缀
+    wsession: 'W-SESSION:'
+

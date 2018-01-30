@@ -1,0 +1,15 @@
+server:
+ port:  8761
+ undertow:
+  worker-threads: 20
+  buffer-size: 512
+  io-threads: 2
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
